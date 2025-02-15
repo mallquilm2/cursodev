@@ -11,13 +11,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NamedQuery;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
 @Table(name="curso")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CursoEntity {
+public class CursoEntity extends RepresentationModel<CursoEntity>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idcurso")

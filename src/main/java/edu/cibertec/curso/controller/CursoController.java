@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,13 +31,20 @@ public class CursoController {
     
     @GetMapping("/cursos")
     public List<CursoEntity> listarTodos(){
-        return cursoService.listarTodos();
+        List<CursoEntity> rpta = cursoService.listarTodos();
+        for (CursoEntity cursoEntity : rpta) {
+            cursoEntity.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CursoController.class).obtenerUno(cursoEntity.getIdCurso())).withSelfRel());
+        }
+        return rpta;
     }
     
     @GetMapping("/cursos/{id}")
     public CursoEntity obtenerUno(@PathVariable("id") int codigo){
         try {
-            return cursoService.obtenerUno(codigo);
+            //return cursoService.obtenerUno(codigo);
+            CursoEntity rpta = cursoService.obtenerUno(codigo);
+            rpta.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CursoController.class).obtenerUno(codigo)).withSelfRel());
+            return rpta;
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no localizado", e);
         }
