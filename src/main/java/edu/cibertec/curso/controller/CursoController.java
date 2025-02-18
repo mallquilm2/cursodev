@@ -7,7 +7,9 @@ import edu.cibertec.curso.service.CursoService;
 import jakarta.websocket.server.PathParam;
 import java.util.List;
 import java.util.NoSuchElementException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -24,10 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@Slf4j
 public class CursoController {
     
     @Autowired
     private CursoService cursoService;
+    
+    @Value("${server.port}")
+    private String puertoUsado;
     
     @GetMapping("/cursos")
     public List<CursoEntity> listarTodos(){
@@ -41,7 +47,7 @@ public class CursoController {
     @GetMapping("/cursos/{id}")
     public CursoEntity obtenerUno(@PathVariable("id") int codigo){
         try {
-            //return cursoService.obtenerUno(codigo);
+            log.info("Instancia donde se ejecuta = "+ puertoUsado);
             CursoEntity rpta = cursoService.obtenerUno(codigo);
             rpta.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CursoController.class).obtenerUno(codigo)).withSelfRel());
             return rpta;
